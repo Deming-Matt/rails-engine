@@ -50,22 +50,27 @@ RSpec.describe "Items", type: :request do
 
   describe "POST /create" do
     it 'creates a single item' do
-      post "/api/v1/items"
-      binding.pry
-      
-      response_body = JSON.parse(response.body, symbolize_names: true)
-      item = response_body[:data]
+      merchant = create(:merchant)
+      id = merchant.id
+      item_params = {
+        name: "Foghorn",
+        description: "Loud Noises",
+        unit_price: 32.99,
+        merchant_id: id
+      }
 
+      post "/api/v1/items", params: { item: item_params }, as: :json
       expect(response).to be_successful
-      expect(item).to have_key(:id)
-      expect(item[:id].to_i).to be_an(Integer)
-
-      expect(item).to have_key(:attributes)
-      expect(item[:attributes]).to have_key(:name)
-      expect(item[:attributes]).to have_key(:description)
-      expect(item[:attributes]).to have_key(:unit_price)
-
-      expect(item[:attributes]).to_not have_key(:created_at)
+      created_item = Item.last
+      expect(created_item).to be_a(Item)
+      expect(created_item.name).to be_a(String)
+      expect(created_item.name).to eq("Foghorn")
+      expect(created_item.description).to be_a(String)
+      expect(created_item.description).to eq("Loud Noises")
+      expect(created_item.unit_price).to be_a(Float)
+      expect(created_item.unit_price).to eq(32.99)
+      expect(created_item.merchant_id).to be_a(Integer)
+      expect(created_item.merchant_id).to eq(id)
     end
   end
 end
