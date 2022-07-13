@@ -59,5 +59,12 @@ RSpec.describe "Merchants", type: :request do
       expect(item[0][:attributes]).to have_key(:unit_price)
       expect(item[0]).to_not have_key(:created_at)
     end
+
+    xit 'can return a status 404 code' do
+      merchant = create(:merchant)
+      id = 5003985
+      create_list(:item, 4, merchant: merchant)
+      get "/api/v1/merchants/#{id}/items"
+    end
   end
 end
