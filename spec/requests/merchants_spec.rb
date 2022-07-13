@@ -40,4 +40,24 @@ RSpec.describe "Merchants", type: :request do
       expect(merchant[:attributes]).to_not have_key(:created_at)
     end
   end
+
+  describe "GET merchants items" do
+    it 'can send the Merchants items' do
+      merchant = create(:merchant)
+      id = merchant.id
+      create_list(:item, 4, merchant: merchant)
+      get "/api/v1/merchants/#{id}/items"
+
+      response_body =JSON.parse(response.body, symbolize_names: true)
+      item = response_body[:data]
+
+      expect(response).to be_successful
+      expect(item[0]).to have_key(:id)
+      expect(item[0]).to have_key(:attributes)
+      expect(item[0][:attributes]).to have_key(:name)
+      expect(item[0][:attributes]).to have_key(:description)
+      expect(item[0][:attributes]).to have_key(:unit_price)
+      expect(item[0]).to_not have_key(:created_at)
+    end
+  end
 end
