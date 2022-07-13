@@ -62,7 +62,7 @@ RSpec.describe "Merchants", type: :request do
 
     xit 'can return a status 404 code' do
       merchant = create(:merchant)
-      id = 5003985
+      id = merchant.id + 1
       create_list(:item, 4, merchant: merchant)
       get "/api/v1/merchants/#{id}/items"
     end

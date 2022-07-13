@@ -4,7 +4,7 @@ class Api::V1::MerchantItemsController < ApplicationController
     # binding.pry
     merchant = Merchant.find(params[:merchant_id])
     if merchant.nil?
-      return {status: "404"}
+      render status: 404
     else
       render json: ItemSerializer.new(merchant.items)
     end
