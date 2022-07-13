@@ -23,4 +23,21 @@ RSpec.describe "Merchants", type: :request do
       end
     end
   end
+
+  describe "GET show page" do
+    it 'sends a merchant' do
+      id = create(:merchant).id
+      get "/api/v1/merchants/#{id}"
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchant = response_body[:data]
+
+      expect(response).to be_successful
+      expect(merchant).to have_key(:id)
+      expect(merchant[:id].to_i).to be_an(Integer)
+      expect(merchant).to have_key(:attributes)
+      expect(merchant[:attributes]).to have_key(:name)
+      expect(merchant[:attributes]).to_not have_key(:created_at)
+    end
+  end
 end

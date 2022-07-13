@@ -14,4 +14,5 @@ class MerchantSerializer
       end
     }
   end
+
 end
