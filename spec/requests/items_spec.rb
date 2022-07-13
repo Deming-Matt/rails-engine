@@ -73,4 +73,26 @@ RSpec.describe "Items", type: :request do
       expect(created_item.merchant_id).to eq(id)
     end
   end
+
+  describe "DELETE /destroy" do
+    it 'deletes the last item' do
+      merchant = create(:merchant)
+      id = merchant.id
+      item_params = {
+        name: "Foghorn",
+        description: "Loud Noises",
+        unit_price: 32.99,
+        merchant_id: id
+      }
+
+      item = create(:item)
+      item_id = item.id
+      post "/api/v1/items", params: { item: item_params }, as: :json
+      delete "/api/v1/items/#{item_id}"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(204)
+    end
+    # it { should respond_with 204 }
+  end
 end
