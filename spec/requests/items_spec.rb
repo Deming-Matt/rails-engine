@@ -95,4 +95,50 @@ RSpec.describe "Items", type: :request do
     end
     # it { should respond_with 204 }
   end
+
+  describe "PUT /patch" do
+    it 'can update an item' do
+      merchant = create(:merchant)
+      id = merchant.id
+      item = create(:item)
+      item_id = item.id
+      item_params = {
+        name: "Foghorn",
+        description: "Loud Noises",
+        unit_price: 32.99,
+        merchant_id: id
+      }
+      put "/api/v1/items/#{item_id}", params: { item: item_params }, as: :json
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      updated_item = response_body[:data]
+
+      expect(response).to be_successful
+      expect(updated_item).to have_key(:id)
+      expect(updated_item).to have_key(:attributes)
+      expect(updated_item[:attributes]).to have_key(:name)
+      expect(updated_item[:attributes]).to have_key(:description)
+      expect(updated_item[:attributes]).to have_key(:unit_price)
+      expect(updated_item[:attributes]).to have_key(:merchant_id)
+    end
+  end
+
+  describe "GET find a merchant of item"
+    it 'can find a merchant of a new item - happy and sad' do
+      merchant = create(:merchant)
+      merchant_id = merchant.id
+      item = create_list(:item, 1, merchant_id: merchant_id)
+      create_list(:merchant, 2)
+
+      get "/api/v1/items/#{item.first.id}/merchant"
+      expect(response).to be_successful
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchant = response_body[:data]
+
+      expect(merchant[:attributes][:name]).to be_a(String)
+
+      expect(merchant[:attributes][:name]).to_not eq(Merchant.second.name)
+      expect(merchant[:attributes][:name]).to_not eq(Merchant.last.name)
+    end
 end
