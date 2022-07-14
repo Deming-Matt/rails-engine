@@ -123,7 +123,7 @@ RSpec.describe "Items", type: :request do
     end
   end
 
-  describe "GET find a merchant of item"
+  describe "GET find a merchant of item" do
     it 'can find a merchant of a new item - happy and sad' do
       merchant = create(:merchant)
       merchant_id = merchant.id
@@ -141,4 +141,5 @@ RSpec.describe "Items", type: :request do
       expect(merchant[:attributes][:name]).to_not eq(Merchant.second.name)
       expect(merchant[:attributes][:name]).to_not eq(Merchant.last.name)
     end
+  end 
 end

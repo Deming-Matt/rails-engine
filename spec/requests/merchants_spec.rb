@@ -67,4 +67,36 @@ RSpec.describe "Merchants", type: :request do
       get "/api/v1/merchants/#{id}/items"
     end
   end
+
+  describe "GET /find"
+    it 'can find a merchant by name' do
+      # params = {name: "Crazy Carl's"}
+      merchant = Merchant.create!({name: "Crazy Carl's"})
+      merchant = Merchant.create!({name: "Pizza Crazy"})
+      create_list(:merchant, 6)
+      query_params = "?name=CrAzY"
+      get "/api/v1/merchants/find#{query_params}"
+
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchants = response_body[:data]
+
+      expect(response).to be_successful
+      expect(merchants).to be_a(Hash)
+      expect(merchants).to have_key(:attributes)
+      expect(merchants[:attributes]).to have_key(:name)
+      expect(merchants[:attributes][:name]).to eq("Crazy Carl's")
+    end
+
+    it 'sad path - should be empty object' do
+      merchant = Merchant.create!({name: "Crazy Carl's"})
+      merchant = Merchant.create!({name: "Pizza Crazy"})
+      create_list(:merchant, 6)
+      query_params = "?name=creatures"
+      get "/api/v1/merchants/find#{query_params}"
+      response_body = JSON.parse(response.body, symbolize_names: true)
+      merchants = response_body[:data]
+      # binding.pry
+      expect(response).to_not be_successful
+      expect(merchants[:name]).to eq(nil)
+    end
 end
