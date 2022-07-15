@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "Items", type: :request do
   describe "GET /index" do
     it 'sends a list of items' do
+      create_list(:item, 4)
       get '/api/v1/items'
 
       response_body = JSON.parse(response.body, symbolize_names: true)
@@ -11,8 +12,8 @@ RSpec.describe "Items", type: :request do
       expect(response).to be_successful
 
       items.each do |item|
-        expect(item).to have_key(:data)
-        expect(item[:data]).to be_a(Array)
+        expect(response_body).to have_key(:data)
+        expect(response_body[:data]).to be_a(Array)
         expect(item).to have_key(:id)
         expect(item[:id].to_i).to be_an(Integer)
 
@@ -146,9 +147,10 @@ RSpec.describe "Items", type: :request do
   describe "GET /find"
     it 'can find all items by name fragment' do
       # params = {name: "Crazy Carl's"}
+      merchant1 = Merchant.create!({name: "Toy Shop"})
       create_list(:merchant, 3)
-      item1 = Item.create!({name: "Winchester", description: "Sweet rifle", unit_price: 300.99, merchant_id: 1})
-      item2 = Item.create!({name: "Chess", description: "Strategy game", unit_price: 41.99, merchant_id: 1})
+      item1 = Item.create!({name: "Winchester", description: "Sweet rifle", unit_price: 300.99, merchant_id: merchant1.id})
+      item2 = Item.create!({name: "Chess", description: "Strategy game", unit_price: 41.99, merchant_id: merchant1.id})
       create_list(:item, 6)
       query_params = "?name=chEs"
       get "/api/v1/items/find_all#{query_params}"
@@ -165,16 +167,16 @@ RSpec.describe "Items", type: :request do
       expect(items.first[:attributes][:unit_price]).to eq(300.99)
     end
 
-    xit 'sad path - should be empty object' do
-      merchant = Merchant.create!({name: "Crazy Carl's"})
-      merchant = Merchant.create!({name: "Pizza Crazy"})
-      create_list(:merchant, 6)
-      query_params = "?name=creatures"
-      get "/api/v1/merchants/find#{query_params}"
-      response_body = JSON.parse(response.body, symbolize_names: true)
-      merchants = response_body[:data]
-      # binding.pry
-      expect(response).to_not be_successful
-      expect(merchants[:name]).to eq(nil)
-    end
+    # xit 'sad path - should be empty object' do
+    #   merchant = Merchant.create!({name: "Crazy Carl's"})
+    #   merchant = Merchant.create!({name: "Pizza Crazy"})
+    #   create_list(:merchant, 6)
+    #   query_params = "?name=creatures"
+    #   get "/api/v1/merchants/find#{query_params}"
+    #   response_body = JSON.parse(response.body, symbolize_names: true)
+    #   merchants = response_body[:data]
+    #   # binding.pry
+    #   expect(response).to_not be_successful
+    #   expect(merchants[:name]).to eq(nil)
+    # end
 end
