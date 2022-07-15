@@ -12,11 +12,4 @@ class Api::V1::Merchants::SearchController < ApplicationController
       render json: {data: Merchant.new}, status: 404
     end
   end
-
-
-  private
-
-    def search_params
-      params.permit(:name)
-    end
 end
