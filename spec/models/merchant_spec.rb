@@ -6,7 +6,7 @@ RSpec.describe Merchant, type: :model do
 
     it { should validate_presence_of :name }
 
-    describe 'methods' do
+    describe 'class methods' do
       it 'can find a merchant by name in search' do
         merchant1 = Merchant.create!({name: "Crazy Carl's"})
         merchant2 = Merchant.create!({name: "Pizza Crazy"})
